@@ -1,5 +1,4 @@
-
--- ZAPORIUM MODERN NEON GUI – green border on the whole card for current game
+-- ZAPORIUM MODERN NEON GUI – green border on whole card + casual load notification
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -278,7 +277,7 @@ local function createGameButton(data)
         stroke.Thickness = 3.8
         stroke.Transparency = 0.2
         stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-        frame.BackgroundColor3 = Color3.fromRGB(30, 45, 35)  -- slightly brighter green-tinted bg
+        frame.BackgroundColor3 = Color3.fromRGB(30, 45, 35) -- slightly brighter green-tinted bg
     end
 
     local name = Instance.new("TextLabel")
@@ -364,9 +363,10 @@ local function createGameButton(data)
                 end
             end)
 
-            Notify("Link copied → open in browser\n" .. data.link)
+            -- Casual, natural notification (no AI tone)
+            Notify("Link copied!\nJust paste it in your browser real quick — so it'll give you the script after the quick stuff.")
         else
-            Notify("No clipboard support\nLink: " .. data.link)
+            Notify("Clipboard not working here\nHere's the link tho: " .. data.link .. "\nPaste it in your browser")
         end
     end)
 end
@@ -515,5 +515,5 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
-Notify("ZAPORIUM ready • green card border for current game added")
-print("ZAPORIUM – full green card indicator loaded")
+Notify("ZAPORIUM ready • ")
+print("ZAPORIUM – updated ")
