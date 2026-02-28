@@ -188,8 +188,8 @@ ytBtn.Font = Enum.Font.GothamSemibold
 ytBtn.Parent = socialFrame
 Instance.new("UICorner", ytBtn).CornerRadius = UDim.new(0, 12)
 
-local discordLink = "https://discord.gg/zaporiumscripts"
-local ytLink = "https://youtube.com/@zappisme"
+local discordLink = "https://discord.gg/AKRccJYH3"
+local ytLink = "https://youtube.com/@scriptzap0?si=6hZqdGZvYMejJS1l"
 
 discordBtn.MouseButton1Click:Connect(function()
     if setclipboard then setclipboard(discordLink) end
@@ -316,7 +316,7 @@ local function createGameButton(data)
         greenStrokeBtn.Thickness = 3.5
         greenStrokeBtn.Parent = loadBtn
 
-        loadBtn.Text = "Load (This Game)"
+        loadBtn.Text = "Load"
         loadBtn.BackgroundColor3 = Color3.fromRGB(80, 255, 140)
     end
 
