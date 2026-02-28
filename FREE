@@ -1,4 +1,6 @@
 -- ZAPORIUM MODERN NEON GUI – green border on whole card + casual load notification
+-- FIXED: Notify function moved BEFORE createGameButton so it can be called
+
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -95,6 +97,39 @@ end)
 closeBtn.MouseLeave:Connect(function()
     TweenService:Create(closeBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(38, 38, 50)}):Play()
 end)
+
+-- ====================== NOTIFICATION FUNCTION (MOVED UP SO IT CAN BE CALLED EARLY) ======================
+local function Notify(msg)
+    local n = Instance.new("Frame")
+    n.Size = UDim2.new(0, 340, 0, 88)
+    n.Position = UDim2.new(1, 30, 0, 45)
+    n.BackgroundColor3 = Color3.fromRGB(16, 20, 44)
+    n.Parent = screenGui
+    Instance.new("UICorner", n).CornerRadius = UDim.new(0, 16)
+
+    local s = Instance.new("UIStroke")
+    s.Color = Color3.fromRGB(0, 240, 220)
+    s.Thickness = 2.2
+    s.Parent = n
+
+    local t = Instance.new("TextLabel")
+    t.Size = UDim2.new(1, -24, 1, -20)
+    t.Position = UDim2.new(0, 12, 0, 10)
+    t.BackgroundTransparency = 1
+    t.Text = msg
+    t.TextColor3 = Color3.fromRGB(220, 255, 255)
+    t.TextSize = 16
+    t.Font = Enum.Font.Gotham
+    t.TextWrapped = true
+    t.TextXAlignment = Enum.TextXAlignment.Left
+    t.Parent = n
+
+    TweenService:Create(n, TweenInfo.new(0.45), {Position = UDim2.new(1, -360, 0, 45)}):Play()
+    task.delay(4.8, function()
+        TweenService:Create(n, TweenInfo.new(0.5), {Position = UDim2.new(1, 30, 0, 45)}):Play()
+        task.delay(0.6, function() n:Destroy() end)
+    end)
+end
 
 -- ====================== TABS ======================
 local tabBar = Instance.new("Frame")
@@ -363,8 +398,8 @@ local function createGameButton(data)
                 end
             end)
 
-            -- Casual, natural notification (no AI tone)
-            Notify("Link copied!\nJust paste it in your browser real quick — so it'll give you the script after the quick stuff.")
+            -- Casual notification
+            Notify("Link copied!\nJust paste it in your browser real quick — it's the LootLabs one, so it'll give you the script after the quick stuff.")
         else
             Notify("Clipboard not working here\nHere's the link tho: " .. data.link .. "\nPaste it in your browser")
         end
@@ -440,39 +475,6 @@ searchBox.Position = UDim2.new(0, 0, 0, 68)
 scroll.Position = UDim2.new(0, 0, 0, 124)
 scroll.Size = UDim2.new(1, 0, 1, -130)
 
--- ====================== NOTIFICATION ======================
-local function Notify(msg)
-    local n = Instance.new("Frame")
-    n.Size = UDim2.new(0, 340, 0, 88)
-    n.Position = UDim2.new(1, 30, 0, 45)
-    n.BackgroundColor3 = Color3.fromRGB(16, 20, 44)
-    n.Parent = screenGui
-    Instance.new("UICorner", n).CornerRadius = UDim.new(0, 16)
-
-    local s = Instance.new("UIStroke")
-    s.Color = Color3.fromRGB(0, 240, 220)
-    s.Thickness = 2.2
-    s.Parent = n
-
-    local t = Instance.new("TextLabel")
-    t.Size = UDim2.new(1, -24, 1, -20)
-    t.Position = UDim2.new(0, 12, 0, 10)
-    t.BackgroundTransparency = 1
-    t.Text = msg
-    t.TextColor3 = Color3.fromRGB(220, 255, 255)
-    t.TextSize = 16
-    t.Font = Enum.Font.Gotham
-    t.TextWrapped = true
-    t.TextXAlignment = Enum.TextXAlignment.Left
-    t.Parent = n
-
-    TweenService:Create(n, TweenInfo.new(0.45), {Position = UDim2.new(1, -360, 0, 45)}):Play()
-    task.delay(4.8, function()
-        TweenService:Create(n, TweenInfo.new(0.5), {Position = UDim2.new(1, 30, 0, 45)}):Play()
-        task.delay(0.6, function() n:Destroy() end)
-    end)
-end
-
 -- Tab switch
 local function setActiveTab(tab)
     if tab == "Info" then
@@ -515,5 +517,5 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
-Notify("ZAPORIUM ready • ")
-print("ZAPORIUM – updated ")
+Notify("ZAPORIUM ready")
+print("ZAPORIUM")
