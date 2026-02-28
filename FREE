@@ -1,1 +1,519 @@
 
+-- ZAPORIUM MODERN NEON GUI – green border on the whole card for current game
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ZaporiumGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game:GetService("CoreGui")
+
+-- ====================== MAIN FRAME ======================
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 460, 0, 560)
+mainFrame.Position = UDim2.new(0.5, -230, 0.5, -280)
+mainFrame.BackgroundColor3 = Color3.fromRGB(11, 11, 23)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 22)
+
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = Color3.fromRGB(0, 235, 255)
+mainStroke.Thickness = 2.2
+mainStroke.Transparency = 0.45
+mainStroke.Parent = mainFrame
+
+-- ====================== TITLE BAR ======================
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 70)
+titleBar.BackgroundColor3 = Color3.fromRGB(16, 16, 34)
+titleBar.Parent = mainFrame
+
+Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 22)
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -120, 0, 50)
+titleLabel.Position = UDim2.new(0, 24, 0, 8)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "ZAPORIUM"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 48
+titleLabel.Font = Enum.Font.GothamBlack
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
+
+-- Slightly faster continuous RGB for ZAPORIUM title
+local titleGradient = Instance.new("UIGradient")
+titleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0.0,  Color3.fromRGB(0,   210, 255)),
+    ColorSequenceKeypoint.new(0.25, Color3.fromRGB(0,   255, 145)),
+    ColorSequenceKeypoint.new(0.5,  Color3.fromRGB(210, 255,  70)),
+    ColorSequenceKeypoint.new(0.75, Color3.fromRGB(230,  70, 255)),
+    ColorSequenceKeypoint.new(1.0,  Color3.fromRGB(0,   210, 255))
+})
+titleGradient.Offset = Vector2.new(0, 0)
+titleGradient.Parent = titleLabel
+
+spawn(function()
+    local t = 0
+    while true do
+        t = t + 0.021
+        local phase = math.sin(t)
+        local offset = phase * 0.45 + 0.1
+        titleGradient.Offset = Vector2.new(offset, 0)
+        task.wait(0.032)
+    end
+end)
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.new(1, -120, 0, 18)
+subtitle.Position = UDim2.new(0, 26, 0, 48)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "Free Script Library • Made by Zappisme"
+subtitle.TextColor3 = Color3.fromRGB(100, 225, 255)
+subtitle.TextSize = 14.5
+subtitle.Font = Enum.Font.GothamMedium
+subtitle.TextXAlignment = Enum.TextXAlignment.Left
+subtitle.Parent = titleBar
+
+-- Close Button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 84, 0, 36)
+closeBtn.Position = UDim2.new(1, -102, 0, 17)
+closeBtn.BackgroundColor3 = Color3.fromRGB(38, 38, 50)
+closeBtn.Text = "Close"
+closeBtn.TextColor3 = Color3.fromRGB(255, 90, 90)
+closeBtn.TextSize = 17
+closeBtn.Font = Enum.Font.GothamSemibold
+closeBtn.Parent = titleBar
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 10)
+
+closeBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
+closeBtn.MouseEnter:Connect(function()
+    TweenService:Create(closeBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(58, 58, 72)}):Play()
+end)
+closeBtn.MouseLeave:Connect(function()
+    TweenService:Create(closeBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(38, 38, 50)}):Play()
+end)
+
+-- ====================== TABS ======================
+local tabBar = Instance.new("Frame")
+tabBar.Size = UDim2.new(1, -40, 0, 52)
+tabBar.Position = UDim2.new(0, 20, 0, 82)
+tabBar.BackgroundTransparency = 1
+tabBar.Parent = mainFrame
+
+local infoTabBtn = Instance.new("TextButton")
+infoTabBtn.Size = UDim2.new(0.48, 0, 1, 0)
+infoTabBtn.BackgroundColor3 = Color3.fromRGB(24, 24, 48)
+infoTabBtn.Text = "INFO"
+infoTabBtn.TextColor3 = Color3.fromRGB(175, 230, 255)
+infoTabBtn.TextSize = 18
+infoTabBtn.Font = Enum.Font.GothamSemibold
+infoTabBtn.Parent = tabBar
+Instance.new("UICorner", infoTabBtn).CornerRadius = UDim.new(0, 14)
+
+local scriptsTabBtn = Instance.new("TextButton")
+scriptsTabBtn.Size = UDim2.new(0.48, 0, 1, 0)
+scriptsTabBtn.Position = UDim2.new(0.52, 0, 0, 0)
+scriptsTabBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
+scriptsTabBtn.Text = "SCRIPTS"
+scriptsTabBtn.TextColor3 = Color3.fromRGB(12, 12, 28)
+scriptsTabBtn.TextSize = 18
+scriptsTabBtn.Font = Enum.Font.GothamSemibold
+scriptsTabBtn.Parent = tabBar
+Instance.new("UICorner", scriptsTabBtn).CornerRadius = UDim.new(0, 14)
+
+-- ====================== CONTENT ======================
+local infoContent = Instance.new("Frame")
+infoContent.Size = UDim2.new(1, -40, 1, -164)
+infoContent.Position = UDim2.new(0, 20, 0, 148)
+infoContent.BackgroundTransparency = 1
+infoContent.Visible = false
+infoContent.Parent = mainFrame
+
+local scriptsContent = Instance.new("Frame")
+scriptsContent.Size = UDim2.new(1, -40, 1, -164)
+scriptsContent.Position = UDim2.new(0, 20, 0, 148)
+scriptsContent.BackgroundTransparency = 1
+scriptsContent.Parent = mainFrame
+
+-- Info text
+local infoText = Instance.new("TextLabel")
+infoText.Size = UDim2.new(1, 0, 0, 260)
+infoText.BackgroundTransparency = 1
+infoText.Text = [[Hey there!
+
+This library is completely free forever.
+
+LootLabs is what makes everything possible — every click helps support the community and the devs who spend hours making these scripts. That’s honestly what keeps me motivated to keep updating and adding more games for you guys.
+
+So yeah… thanks for using the links when you can. Means a lot.
+
+Enjoy the scripts 🔥
+— Zappisme]]
+infoText.TextColor3 = Color3.fromRGB(185, 240, 255)
+infoText.TextSize = 17
+infoText.Font = Enum.Font.Gotham
+infoText.TextWrapped = true
+infoText.TextYAlignment = Enum.TextYAlignment.Top
+infoText.Parent = infoContent
+
+-- Social buttons
+local socialFrame = Instance.new("Frame")
+socialFrame.Size = UDim2.new(1, 0, 0, 58)
+socialFrame.Position = UDim2.new(0, 0, 1, -64)
+socialFrame.BackgroundTransparency = 1
+socialFrame.Parent = infoContent
+
+local discordBtn = Instance.new("TextButton")
+discordBtn.Size = UDim2.new(0.48, -6, 1, 0)
+discordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+discordBtn.Text = "Discord • Suggest Games"
+discordBtn.TextColor3 = Color3.new(1,1,1)
+discordBtn.TextSize = 16
+discordBtn.Font = Enum.Font.GothamSemibold
+discordBtn.Parent = socialFrame
+Instance.new("UICorner", discordBtn).CornerRadius = UDim.new(0, 12)
+
+local ytBtn = Instance.new("TextButton")
+ytBtn.Size = UDim2.new(0.48, -6, 1, 0)
+ytBtn.Position = UDim2.new(0.52, 6, 0, 0)
+ytBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 80)
+ytBtn.Text = "YouTube • Zappisme"
+ytBtn.TextColor3 = Color3.new(1,1,1)
+ytBtn.TextSize = 16
+ytBtn.Font = Enum.Font.GothamSemibold
+ytBtn.Parent = socialFrame
+Instance.new("UICorner", ytBtn).CornerRadius = UDim.new(0, 12)
+
+local discordLink = "https://discord.gg/zaporiumscripts"
+local ytLink = "https://youtube.com/@zappisme"
+
+discordBtn.MouseButton1Click:Connect(function()
+    if setclipboard then setclipboard(discordLink) end
+    Notify("Discord link copied — join to suggest games!")
+end)
+
+ytBtn.MouseButton1Click:Connect(function()
+    if setclipboard then setclipboard(ytLink) end
+    Notify("YouTube link copied — check the channel!")
+end)
+
+-- ====================== SCRIPTS TAB ======================
+local searchBox = Instance.new("TextBox")
+searchBox.Size = UDim2.new(1, 0, 0, 46)
+searchBox.BackgroundColor3 = Color3.fromRGB(20, 20, 38)
+searchBox.PlaceholderText = "Search games..."
+searchBox.Text = ""
+searchBox.TextColor3 = Color3.fromRGB(245, 245, 255)
+searchBox.PlaceholderColor3 = Color3.fromRGB(140, 155, 185)
+searchBox.TextSize = 17
+searchBox.Font = Enum.Font.Gotham
+searchBox.ClearTextOnFocus = false
+searchBox.Parent = scriptsContent
+Instance.new("UICorner", searchBox).CornerRadius = UDim.new(0, 14)
+
+local searchStroke = Instance.new("UIStroke")
+searchStroke.Color = Color3.fromRGB(65, 75, 105)
+searchStroke.Thickness = 1.5
+searchStroke.Parent = searchBox
+
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, 0, 1, -56)
+scroll.Position = UDim2.new(0, 0, 0, 56)
+scroll.BackgroundTransparency = 1
+scroll.ScrollBarThickness = 3
+scroll.ScrollBarImageColor3 = Color3.fromRGB(0, 205, 255)
+scroll.Parent = scriptsContent
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.Padding = UDim.new(0, 10)
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Parent = scroll
+
+-- ====================== GAME DETECTION ======================
+local currentPlaceId = game.PlaceId
+
+-- ====================== GAMES ======================
+local games = {
+    {name = "+1 Speed Dinosaur Escape", link = "https://loot-link.com/s?SV1IaVqp", placeId = 110339581423462},
+    {name = "Glide for Brainrots", link = "https://loot-link.com/s?4ccugDds", placeId = 106685450523667},
+    {name = "[UPD] Save Brainrots From Backrooms", link = "https://loot-link.com/s?CiP2Ocu9", placeId = 88797686191630},
+    {name = "Pistol Arena", link = "https://loot-link.com/s?jF2OqArO", placeId = 87018676608089},
+    {name = "Dive For Brainrots!", link = "https://lootdest.org/s?COXICF48", placeId = 113303333910928},
+    {name = "[🔱] Dive Down", link = "https://lootdest.org/s?EdFWkvi3", placeId = 131756752872026},
+    {name = "Garden Horizons 🌱", link = "https://lootdest.org/s?r31L7vO7", placeId = 130594398886540},
+    {name = "Run For Brainrots!", link = "https://loot-link.com/s?ajIYlCe8", placeId = 94702395375549},
+    {name = "[🧬] Survive LAVA for Brainrots!", link = "https://lootdest.org/s?zh0UNYcG", placeId = 119987266683883},
+    {name = "[🧬] Jump for Brainrots!", link = "https://lootdest.org/s?1GeJ8cOO", placeId = 139299356663913},
+    {name = "[🥚] Become Hungry Worm", link = "https://lootdest.org/s?RyWpmx7R", placeId = 127415661078736},
+    {name = "Murder Mystery 2", link = "https://lootlabs.gg/demo-mm2-abc999", placeId = 142823291},
+}
+
+local currentGameData = nil
+for _, g in ipairs(games) do
+    if g.placeId == currentPlaceId then
+        currentGameData = g
+        break
+    end
+end
+
+local function createGameButton(data)
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, 0, 0, 66)
+    frame.BackgroundColor3 = Color3.fromRGB(22, 22, 42)
+    frame.Parent = scroll
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(50, 70, 115)
+    stroke.Thickness = 1.4
+    stroke.Parent = frame
+
+    -- GREEN BORDER + GLOW on the whole card if this is the current game
+    if data.placeId and data.placeId == currentPlaceId then
+        stroke.Color = Color3.fromRGB(0, 255, 120)
+        stroke.Thickness = 3.8
+        stroke.Transparency = 0.2
+        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        frame.BackgroundColor3 = Color3.fromRGB(30, 45, 35)  -- slightly brighter green-tinted bg
+    end
+
+    local name = Instance.new("TextLabel")
+    name.Size = UDim2.new(0.58, 0, 1, 0)
+    name.Position = UDim2.new(0, 20, 0, 0)
+    name.BackgroundTransparency = 1
+    name.Text = data.name
+    name.TextColor3 = Color3.fromRGB(235, 235, 255)
+    name.TextSize = 20
+    name.Font = Enum.Font.GothamSemibold
+    name.TextXAlignment = Enum.TextXAlignment.Left
+    name.Parent = frame
+
+    local loadBtn = Instance.new("TextButton")
+    loadBtn.Size = UDim2.new(0, 120, 0, 44)
+    loadBtn.Position = UDim2.new(1, -138, 0.5, -22)
+    loadBtn.BackgroundColor3 = Color3.fromRGB(0, 205, 255)
+    loadBtn.Text = "Load"
+    loadBtn.TextColor3 = Color3.fromRGB(10, 10, 25)
+    loadBtn.TextSize = 16
+    loadBtn.Font = Enum.Font.GothamBold
+    loadBtn.TextXAlignment = Enum.TextXAlignment.Center
+    loadBtn.Parent = frame
+    Instance.new("UICorner", loadBtn).CornerRadius = UDim.new(0, 12)
+
+    local padding = Instance.new("UIPadding")
+    padding.PaddingLeft = UDim.new(0, 8)
+    padding.PaddingRight = UDim.new(0, 8)
+    padding.Parent = loadBtn
+
+    -- Green indicator on button too (if current game)
+    if data.placeId and data.placeId == currentPlaceId then
+        local greenStrokeBtn = Instance.new("UIStroke")
+        greenStrokeBtn.Color = Color3.fromRGB(0, 255, 120)
+        greenStrokeBtn.Thickness = 3.5
+        greenStrokeBtn.Parent = loadBtn
+
+        loadBtn.Text = "Load (This Game)"
+        loadBtn.BackgroundColor3 = Color3.fromRGB(80, 255, 140)
+    end
+
+    -- Faster RGB cycling on Load buttons
+    local btnGradient = Instance.new("UIGradient")
+    btnGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0.0,  Color3.fromRGB(0,   220, 255)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(0,   255, 160)),
+        ColorSequenceKeypoint.new(0.5,  Color3.fromRGB(220, 100, 255)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(180, 255, 100)),
+        ColorSequenceKeypoint.new(1.0,  Color3.fromRGB(0,   220, 255))
+    })
+    btnGradient.Offset = Vector2.new(0, 0)
+    btnGradient.Parent = loadBtn
+
+    spawn(function()
+        local t = math.random() * 10
+        while loadBtn and loadBtn.Parent do
+            t = t + 0.028
+            local phase = math.sin(t)
+            local offset = phase * 0.4 + 0.15
+            btnGradient.Offset = Vector2.new(offset, 0)
+            task.wait(0.025)
+        end
+    end)
+
+    loadBtn.MouseEnter:Connect(function()
+        TweenService:Create(loadBtn, TweenInfo.new(0.25), {BackgroundColor3 = Color3.fromRGB(120, 255, 255)}):Play()
+    end)
+
+    loadBtn.MouseButton1Click:Connect(function()
+        if setclipboard then
+            setclipboard(data.link)
+
+            local origText = loadBtn.Text
+            loadBtn.Text = "Copied ✓"
+            TweenService:Create(loadBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(100, 255, 140)}):Play()
+
+            task.delay(1.4, function()
+                if loadBtn and loadBtn.Parent then
+                    TweenService:Create(loadBtn, TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(0, 205, 255)}):Play()
+                    task.delay(0.4, function()
+                        if loadBtn and loadBtn.Parent then loadBtn.Text = origText end
+                    end)
+                end
+            end)
+
+            Notify("Link copied → open in browser\n" .. data.link)
+        else
+            Notify("No clipboard support\nLink: " .. data.link)
+        end
+    end)
+end
+
+local function refreshGames(filter)
+    filter = (filter or ""):lower()
+    for _, child in scroll:GetChildren() do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    for _, g in ipairs(games) do
+        if filter == "" or g.name:lower():find(filter) then
+            createGameButton(g)
+        end
+    end
+    scroll.CanvasSize = UDim2.new(0,0,0, listLayout.AbsoluteContentSize.Y + 30)
+end
+
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    refreshGames(searchBox.Text)
+end)
+
+refreshGames("")
+
+-- ====================== AUTO-DETECTION UI ======================
+local detectionFrame = Instance.new("Frame")
+detectionFrame.Size = UDim2.new(1, 0, 0, 58)
+detectionFrame.Position = UDim2.new(0, 0, 0, 0)
+detectionFrame.BackgroundColor3 = Color3.fromRGB(25, 30, 55)
+detectionFrame.Parent = scriptsContent
+Instance.new("UICorner", detectionFrame).CornerRadius = UDim.new(0, 14)
+
+local detectionLabel = Instance.new("TextLabel")
+detectionLabel.Size = UDim2.new(1, -200, 1, 0)
+detectionLabel.Position = UDim2.new(0, 15, 0, 0)
+detectionLabel.BackgroundTransparency = 1
+detectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+detectionLabel.TextSize = 16.5
+detectionLabel.Font = Enum.Font.GothamSemibold
+detectionLabel.TextWrapped = true
+detectionLabel.TextXAlignment = Enum.TextXAlignment.Left
+detectionLabel.Parent = detectionFrame
+
+local suggestBtn = Instance.new("TextButton")
+suggestBtn.Size = UDim2.new(0, 180, 0, 38)
+suggestBtn.Position = UDim2.new(1, -190, 0.5, -19)
+suggestBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+suggestBtn.Text = "Suggest this game"
+suggestBtn.TextColor3 = Color3.new(1,1,1)
+suggestBtn.TextSize = 15.5
+suggestBtn.Font = Enum.Font.GothamSemibold
+suggestBtn.Parent = detectionFrame
+Instance.new("UICorner", suggestBtn).CornerRadius = UDim.new(0, 10)
+
+if currentGameData then
+    detectionLabel.Text = "✅ Playing: " .. currentGameData.name .. " (Supported)"
+    detectionLabel.TextColor3 = Color3.fromRGB(0, 255, 140)
+    suggestBtn.Visible = false
+else
+    detectionLabel.Text = "❌ This game is not in the library yet"
+    detectionLabel.TextColor3 = Color3.fromRGB(255, 180, 80)
+    suggestBtn.Visible = true
+end
+
+suggestBtn.MouseButton1Click:Connect(function()
+    if setclipboard then setclipboard(discordLink) end
+    Notify("Discord link copied!\nSuggest this game there → we'll add it soon!")
+end)
+
+-- Shift searchBox and scroll down
+searchBox.Position = UDim2.new(0, 0, 0, 68)
+scroll.Position = UDim2.new(0, 0, 0, 124)
+scroll.Size = UDim2.new(1, 0, 1, -130)
+
+-- ====================== NOTIFICATION ======================
+local function Notify(msg)
+    local n = Instance.new("Frame")
+    n.Size = UDim2.new(0, 340, 0, 88)
+    n.Position = UDim2.new(1, 30, 0, 45)
+    n.BackgroundColor3 = Color3.fromRGB(16, 20, 44)
+    n.Parent = screenGui
+    Instance.new("UICorner", n).CornerRadius = UDim.new(0, 16)
+
+    local s = Instance.new("UIStroke")
+    s.Color = Color3.fromRGB(0, 240, 220)
+    s.Thickness = 2.2
+    s.Parent = n
+
+    local t = Instance.new("TextLabel")
+    t.Size = UDim2.new(1, -24, 1, -20)
+    t.Position = UDim2.new(0, 12, 0, 10)
+    t.BackgroundTransparency = 1
+    t.Text = msg
+    t.TextColor3 = Color3.fromRGB(220, 255, 255)
+    t.TextSize = 16
+    t.Font = Enum.Font.Gotham
+    t.TextWrapped = true
+    t.TextXAlignment = Enum.TextXAlignment.Left
+    t.Parent = n
+
+    TweenService:Create(n, TweenInfo.new(0.45), {Position = UDim2.new(1, -360, 0, 45)}):Play()
+    task.delay(4.8, function()
+        TweenService:Create(n, TweenInfo.new(0.5), {Position = UDim2.new(1, 30, 0, 45)}):Play()
+        task.delay(0.6, function() n:Destroy() end)
+    end)
+end
+
+-- Tab switch
+local function setActiveTab(tab)
+    if tab == "Info" then
+        infoContent.Visible = true
+        scriptsContent.Visible = false
+        infoTabBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
+        infoTabBtn.TextColor3 = Color3.fromRGB(12, 12, 28)
+        scriptsTabBtn.BackgroundColor3 = Color3.fromRGB(24, 24, 48)
+        scriptsTabBtn.TextColor3 = Color3.fromRGB(175, 230, 255)
+    else
+        infoContent.Visible = false
+        scriptsContent.Visible = true
+        scriptsTabBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
+        scriptsTabBtn.TextColor3 = Color3.fromRGB(12, 12, 28)
+        infoTabBtn.BackgroundColor3 = Color3.fromRGB(24, 24, 48)
+        infoTabBtn.TextColor3 = Color3.fromRGB(175, 230, 255)
+    end
+end
+
+infoTabBtn.MouseButton1Click:Connect(function() setActiveTab("Info") end)
+scriptsTabBtn.MouseButton1Click:Connect(function() setActiveTab("Scripts") end)
+setActiveTab("Scripts")
+
+-- Draggable
+local dragging, dragStart, startPos
+titleBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+titleBar.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+Notify("ZAPORIUM ready • green card border for current game added")
+print("ZAPORIUM – full green card indicator loaded")
