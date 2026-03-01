@@ -272,7 +272,8 @@ local currentPlaceId = game.PlaceId
 
 -- ====================== GAMES ======================
 local games = {
-    {name = "+My Fishing Brainrots", link = "https://lootdest.org/s?f0S4LR2l", placeId = 113489516847696},
+    {name = "Jump to Steal Brainrots!", link = "https://lootdest.org/s?Q769WNgY", placeId = 90695455422761},
+    {name = "My Fishing Brainrots", link = "https://lootdest.org/s?f0S4LR2l", placeId = 113489516847696},
     {name = "+1 Speed Dinosaur Escape", link = "https://loot-link.com/s?SV1IaVqp", placeId = 110339581423462},
     {name = "Glide for Brainrots", link = "https://loot-link.com/s?4ccugDds", placeId = 106685450523667},
     {name = "[UPD] Save Brainrots From Backrooms", link = "https://loot-link.com/s?CiP2Ocu9", placeId = 88797686191630},
